@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zonas Horarias Globales</title>
+    <title>Detector de Modo Visual</title>
     <style>
         body {
             margin: 0;
@@ -27,24 +27,29 @@
             text-transform: uppercase;
         }
         .value {
-            font-size: 3.5rem;
+            font-size: 4rem;
             font-weight: bold;
-            color: #06b6d4; /* Color cian / azul brillante */
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div class="label">Zona Horaria del Servidor</div>
-        <div class="value" id="timezone-display">Detectando...</div>
+        <div class="label">Preferencia de Tema del Sistema</div>
+        <div class="value" id="theme-display">Detectando...</div>
     </div>
 
     <script>
-        // Obtiene la zona horaria oficial del sistema (ej: "America/New_York", "Europe/Madrid")
-        const zonaHoraria = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        
-        document.getElementById('timezone-display').textContent = zonaHoraria;
+        const themeDisplay = document.getElementById('theme-display');
+
+        // Comprobamos si el navegador prefiere modo oscuro
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            themeDisplay.textContent = "MODO OSCURO 🌙";
+            themeDisplay.style.color = "#38bdf8"; // Azul claro
+        } else {
+            themeDisplay.textContent = "MODO CLARO ☀️";
+            themeDisplay.style.color = "#fbbf24"; // Amarillo sol
+        }
     </script>
 
 </body>
