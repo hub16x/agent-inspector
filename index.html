@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Caos Temporal</title>
+    <title>Límite del Frontend</title>
     <style>
         * {
             box-sizing: border-box;
@@ -15,7 +15,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #030303;
+            background-color: #020205;
             color: #f3f4f6;
             font-family: monospace;
             padding: 24px;
@@ -28,8 +28,8 @@
             gap: 20px;
         }
         .card {
-            background-color: #09090e;
-            border: 1px solid #27272a;
+            background-color: #0b0c16;
+            border: 1px solid #1e2038;
             border-radius: 12px;
             padding: 24px;
             text-align: center;
@@ -41,92 +41,65 @@
             font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            color: #71717a;
+            color: #6b7280;
             margin-bottom: 12px;
         }
         .value {
             font-weight: bold;
         }
-        #fps-display {
+        #bot-status {
             font-size: 3.5rem;
-            color: #a855f7; /* Morado */
         }
-        #history-display {
+        #color-display {
             font-size: 3.5rem;
-            color: #eab308; /* Amarillo */
+            color: #38bdf8; /* Azul claro */
         }
-        .timeline {
-            display: flex;
-            justify-content: space-around;
-            width: 100%;
-            margin-top: 10px;
-        }
-        .milestone {
-            padding: 8px 12px;
-            background-color: #18181b;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            color: #ef4444; /* Rojo por defecto (Inactivo) */
-        }
-        .milestone.active {
-            color: #22c55e; /* Verde (Logrado) */
-            font-weight: bold;
+        #fonts-display {
+            font-size: 3.5rem;
+            color: #f43f5e; /* Rosa */
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- 1. El Detector de Mentiras Temporal -->
+        <!-- 1. El chivato de robots (WebDriver) -->
         <div class="card full-width">
-            <div class="label">Línea del Tiempo (Hitos del Reloj)</div>
-            <div class="timeline">
-                <div id="t-10" class="milestone">10ms</div>
-                <div id="t-100" class="milestone">100ms</div>
-                <div id="t-500" class="milestone">500ms</div>
-                <div id="t-1000" class="milestone">1000ms</div>
-                <div id="t-2000" class="milestone">2000ms</div>
-            </div>
+            <div class="label">¿Es un Bot Automatizado? (navigator.webdriver)</div>
+            <div class="value" id="bot-status">Detectando...</div>
         </div>
 
-        <!-- 2. Fluidez Gráfica (FPS acumulados) -->
+        <!-- 2. Profundidad de Color de la pantalla -->
         <div class="card">
-            <div class="label">Fotogramas Renderizados (FPS totales)</div>
-            <div class="value" id="fps-display">0</div>
+            <div class="label">Bits de Color de Pantalla</div>
+            <div class="value" id="color-display">0 bits</div>
         </div>
 
-        <!-- 3. Páginas en el Historial -->
+        <!-- 3. Fuentes cargadas en el sistema -->
         <div class="card">
-            <div class="label">Páginas en Historial Interno</div>
-            <div class="value" id="history-display">0</div>
+            <div class="label">Fuentes del Sistema Cargadas</div>
+            <div class="value" id="fonts-display">0</div>
         </div>
     </div>
 
     <script>
-        // --- 1. SEGUIMIENTO DE HITOS TEMPORALES ---
-        const activarHito = (id) => {
-            document.getElementById(id).classList.add('active');
-        };
-
-        setTimeout(() => activarHito('t-10'), 10);
-        setTimeout(() => activarHito('t-100'), 100);
-        setTimeout(() => activarHito('t-500'), 500);
-        setTimeout(() => activarHito('t-1000'), 1000);
-        setTimeout(() => activarHito('t-2000'), 2000);
-
-
-        // --- 2. CONTADOR DE FOTOGRAMAS (FPS) ---
-        let totalFrames = 0;
-        function countFrames() {
-            totalFrames++;
-            document.getElementById('fps-display').textContent = totalFrames;
-            requestAnimationFrame(countFrames);
+        // 1. Detectar si el navegador admite abiertamente que es un robot
+        const esRobot = navigator.webdriver;
+        const statusElement = document.getElementById('bot-status');
+        if (esRobot) {
+            statusElement.textContent = "SÍ (TRUE) 🤖";
+            statusElement.style.color = "#ef4444"; // Rojo peligro
+        } else {
+            statusElement.textContent = "NO (FALSE) 👤";
+            statusElement.style.color = "#22c55e"; // Verde humano
         }
-        requestAnimationFrame(countFrames);
 
+        // 2. Medir los bits de profundidad de color
+        document.getElementById('color-display').textContent = `${screen.colorDepth} bits`;
 
-        // --- 3. LONGITUD DEL HISTORIAL ---
-        document.getElementById('history-display').textContent = window.history.length;
+        // 3. Contar cuántas familias de fuentes tiene cargadas el navegador
+        // Nota: Esto cuenta los conjuntos cargados en el documento actual listos para usar
+        document.getElementById('fonts-display').textContent = document.fonts.size;
     </script>
 
 </body>
