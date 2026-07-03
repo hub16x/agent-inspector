@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detector de Idiomas Humanos</title>
+    <title>Inspector de Complementos</title>
     <style>
         body {
             margin: 0;
@@ -27,32 +27,24 @@
             text-transform: uppercase;
         }
         .value {
-            font-size: 3rem;
+            font-size: 4rem;
             font-weight: bold;
-            color: #a855f7; /* Color morado */
-            word-break: break-all;
+            color: #ec4899; /* Color rosa/fucsia */
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div class="label">Idiomas del Navegador (navigator.languages)</div>
-        <div class="value" id="languages-display">Detectando...</div>
+        <div class="label">Plugins detectados en el Navegador</div>
+        <div class="value" id="plugins-count">0</div>
     </div>
 
     <script>
-        // Obtiene la lista de idiomas
-        const listaIdiomas = navigator.languages;
-
-        // Si la lista está vacía o no tiene elementos, mostramos un mensaje especial para el bot
-        if (!listaIdiomas || listaIdiomas.length === 0) {
-            document.getElementById('languages-display').textContent = "[ VACÍO ] (¡Hola, Bot de Vercel!)";
-            document.getElementById('languages-display').style.color = "#ef4444"; // Cambia a rojo si es el bot
-        } else {
-            // Si eres tú, mostrará algo como "es-ES, es, en"
-            document.getElementById('languages-display').textContent = listaIdiomas.join(', ');
-        }
+        // Cuenta cuántos plugins/complementos internos tiene el navegador
+        const cantidadPlugins = navigator.plugins.length;
+        
+        document.getElementById('plugins-count').textContent = cantidadPlugins;
     </script>
 
 </body>
