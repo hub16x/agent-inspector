@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inspector de Complementos</title>
+    <title>Zonas Horarias Globales</title>
     <style>
         body {
             margin: 0;
@@ -27,24 +27,24 @@
             text-transform: uppercase;
         }
         .value {
-            font-size: 4rem;
+            font-size: 3.5rem;
             font-weight: bold;
-            color: #ec4899; /* Color rosa/fucsia */
+            color: #06b6d4; /* Color cian / azul brillante */
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div class="label">Plugins detectados en el Navegador</div>
-        <div class="value" id="plugins-count">0</div>
+        <div class="label">Zona Horaria del Servidor</div>
+        <div class="value" id="timezone-display">Detectando...</div>
     </div>
 
     <script>
-        // Cuenta cuántos plugins/complementos internos tiene el navegador
-        const cantidadPlugins = navigator.plugins.length;
+        // Obtiene la zona horaria oficial del sistema (ej: "America/New_York", "Europe/Madrid")
+        const zonaHoraria = Intl.DateTimeFormat().resolvedOptions().timeZone;
         
-        document.getElementById('plugins-count').textContent = cantidadPlugins;
+        document.getElementById('timezone-display').textContent = zonaHoraria;
     </script>
 
 </body>
