@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Inspección de Bots</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #05050a;
+            color: #f3f4f6;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            padding: 24px;
+        }
+        .container {
+            width: 100%;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .card {
+            background-color: #0f111a;
+            border: 1px solid #1f293d;
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .full-width {
+            grid-column: span 2;
+        }
+        .label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #9ca3af;
+            margin-bottom: 12px;
+        }
+        .value {
+            font-weight: bold;
+            font-family: monospace;
+        }
+        #ua-display {
+            font-size: 1.5rem;
+            color: #3b82f6; /* Azul */
+            word-break: break-all;
+            line-height: 1.4;
+        }
+        #resolution-display {
+            font-size: 3rem;
+            color: #10b981; /* Verde */
+        }
+        #timer-display {
+            font-size: 3rem;
+            color: #f59e0b; /* Naranja */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Fila superior: Identidad del Bot -->
+        <div class="card full-width">
+            <div class="label">Identidad (User Agent)</div>
+            <div class="value" id="ua-display">Detectando...</div>
+        </div>
+
+        <!-- Fila inferior izquierda: Resolución -->
+        <div class="card">
+            <div class="label">Resolución de Pantalla</div>
+            <div class="value" id="resolution-display">0 x 0</div>
+        </div>
+
+        <!-- Fila inferior derecha: Cronómetro -->
+        <div class="card">
+            <div class="label">Tiempo Transcurrido</div>
+            <div class="value" id="timer-display">0.00s</div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Capturar y mostrar el User Agent
+        document.getElementById('ua-display').textContent = navigator.userAgent;
+
+        // 2. Capturar y mostrar la resolución del visor (viewport)
+        const updateResolution = () => {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            document.getElementById('resolution-display').textContent = `${width} x ${height}`;
+        };
+        updateResolution();
+        // Por si la pantalla cambia de tamaño mientras carga
+        window.addEventListener('resize', updateResolution);
+
+        // 3. Iniciar el cronómetro de alta precisión
+        const startTime = performance.now();
+        const timerElement = document.getElementById('timer-display');
+
+        function updateTimer() {
+            const currentTime = performance.now();
+            const elapsedTime = (currentTime - startTime) / 1000;
+            // Muestra dos decimales para capturar milisegundos exactos
+            timerElement.textContent = `${elapsedTime.toFixed(2)}s`;
+            requestAnimationFrame(updateTimer);
+        }
+        requestAnimationFrame(updateTimer);
+    </script>
+
+</body>
+</html>
