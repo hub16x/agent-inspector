@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Límite del Frontend</title>
+    <title>Lienzo Fantasma</title>
     <style>
         * {
             box-sizing: border-box;
@@ -12,94 +12,97 @@
         }
         body {
             height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #020205;
-            color: #f3f4f6;
+            background-color: #030303;
+            overflow: hidden;
+            position: relative;
             font-family: monospace;
-            padding: 24px;
         }
-        .container {
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 900px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            height: 100%;
+            z-index: 1;
         }
-        .card {
-            background-color: #0b0c16;
-            border: 1px solid #1e2038;
-            border-radius: 12px;
-            padding: 24px;
+        .ui-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            background-color: rgba(5, 5, 10, 0.85);
+            border: 2px solid #27272a;
+            border-radius: 16px;
+            padding: 30px;
             text-align: center;
-        }
-        .full-width {
-            grid-column: span 2;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            max-width: 90%;
         }
         .label {
             font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            color: #6b7280;
-            margin-bottom: 12px;
+            color: #a1a1aa;
+            margin-bottom: 8px;
         }
         .value {
+            font-size: 2.2rem;
             font-weight: bold;
+            color: #a855f7; /* Morado */
+            margin-bottom: 20px;
         }
-        #bot-status {
-            font-size: 3.5rem;
-        }
-        #color-display {
-            font-size: 3.5rem;
-            color: #38bdf8; /* Azul claro */
-        }
-        #fonts-display {
-            font-size: 3.5rem;
-            color: #f43f5e; /* Rosa */
+        .signature {
+            font-size: 1.1rem;
+            color: #10b981; /* Verde */
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- 1. El chivato de robots (WebDriver) -->
-        <div class="card full-width">
-            <div class="label">¿Es un Bot Automatizado? (navigator.webdriver)</div>
-            <div class="value" id="bot-status">Detectando...</div>
-        </div>
+    <!-- El lienzo donde el bot va a dibujar a la fuerza -->
+    <canvas id="canvas-arte"></canvas>
 
-        <!-- 2. Profundidad de Color de la pantalla -->
-        <div class="card">
-            <div class="label">Bits de Color de Pantalla</div>
-            <div class="value" id="color-display">0 bits</div>
-        </div>
-
-        <!-- 3. Fuentes cargadas en el sistema -->
-        <div class="card">
-            <div class="label">Fuentes del Sistema Cargadas</div>
-            <div class="value" id="fonts-display">0</div>
-        </div>
+    <!-- La tarjeta con los datos congelados -->
+    <div class="ui-overlay">
+        <div class="label">Marca de Tiempo del Servidor</div>
+        <div class="value" id="timestamp-display">0000000000000</div>
+        
+        <div class="label">Firma del Autor</div>
+        <div class="signature">DISEÑADO POR SOFTWARE POR VERCEL_BOT</div>
     </div>
 
     <script>
-        // 1. Detectar si el navegador admite abiertamente que es un robot
-        const esRobot = navigator.webdriver;
-        const statusElement = document.getElementById('bot-status');
-        if (esRobot) {
-            statusElement.textContent = "SÍ (TRUE) 🤖";
-            statusElement.style.color = "#ef4444"; // Rojo peligro
-        } else {
-            statusElement.textContent = "NO (FALSE) 👤";
-            statusElement.style.color = "#22c55e"; // Verde humano
+        // 1. Mostrar la marca de tiempo exacta en milisegundos de UNIX
+        document.getElementById('timestamp-display').textContent = Date.now();
+
+        // 2. Configurar el lienzo de dibujo
+        const canvas = document.getElementById('canvas-arte');
+        const ctx = canvas.getContext('2d');
+
+        // Ajustamos el tamaño del lienzo al tamaño de la pantalla del bot
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // 3. Generar el arte geométrico aleatorio
+        // Usamos un bucle para dibujar 150 líneas fluorescentes al azar
+        const colores = ['#f43f5e', '#3b82f6', '#10b981', '#a855f7', '#eab308', '#06b6d4'];
+        
+        for (let i = 0; i < 150; i++) {
+            ctx.beginPath();
+            // Puntos de inicio aleatorios
+            ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+            // Puntos de fin aleatorios
+            ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+            
+            // Grosor y color aleatorio
+            ctx.lineWidth = Math.random() * 3 + 0.5;
+            ctx.strokeStyle = colores[Math.floor(Math.random() * colores.length)];
+            // Le damos un toque de transparencia para que se mezclen genial
+            ctx.globalAlpha = 0.4; 
+            ctx.stroke();
         }
-
-        // 2. Medir los bits de profundidad de color
-        document.getElementById('color-display').textContent = `${screen.colorDepth} bits`;
-
-        // 3. Contar cuántas familias de fuentes tiene cargadas el navegador
-        // Nota: Esto cuenta los conjuntos cargados en el documento actual listos para usar
-        document.getElementById('fonts-display').textContent = document.fonts.size;
     </script>
 
 </body>
