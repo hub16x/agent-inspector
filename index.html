@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drive Mad + FPS Benchmark</title>
+    <title>OvO Benchmark - Prueba de Estrés</title>
     <style>
         * {
             box-sizing: border-box;
@@ -17,7 +17,7 @@
             font-family: monospace;
         }
 
-        /* El juego real corriendo de fondo */
+        /* El juego OvO ocupando todo el visor */
         iframe {
             width: 100vw;
             height: 100vh;
@@ -28,19 +28,19 @@
             z-index: 1;
         }
 
-        /* El contador de fotogramas inyectado por encima */
+        /* El monitor de rendimiento superior */
         .fps-overlay {
             position: absolute;
             top: 20px;
             left: 20px;
-            z-index: 9999; /* Asegura estar por encima del juego */
-            background-color: rgba(5, 5, 10, 0.9);
-            border: 2px solid #ef4444; /* Rojo alerta */
+            z-index: 9999;
+            background-color: rgba(5, 5, 10, 0.95);
+            border: 2px solid #a855f7; /* Morado para pruebas extremas */
             border-radius: 8px;
             padding: 15px 25px;
             text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
-            pointer-events: none; /* No interfiere si haces clic */
+            box-shadow: 0 4px 25px rgba(0,0,0,0.9);
+            pointer-events: none;
         }
         .label {
             font-size: 0.8rem;
@@ -52,25 +52,25 @@
         .value {
             font-size: 2.5rem;
             font-weight: bold;
-            color: #f43f5e;
+            color: #a855f7;
         }
         .bot-tag {
             font-size: 0.7rem;
-            color: #6b7280;
+            color: #4b5563;
             margin-top: 5px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Inyectamos una versión unblocked y limpia de Drive Mad mediante un mirror de GitHub -->
-    <iframe src="https://hub16x.github.io/drive-mad"></iframe>
+    <!-- Inyectamos una versión unblocked y directa del motor de OvO -->
+    <iframe src="https://hub16x.github.io/OvO"></iframe>
 
-    <!-- Capa del contador inyectada sobre el juego -->
+    <!-- Pantalla de control de fotogramas por encima -->
     <div class="fps-overlay">
-        <div class="label">Rendimiento del Motor</div>
+        <div class="label">Rendimiento Físico 2D</div>
         <div class="value" id="fps-counter">00 FPS</div>
-        <div class="bot-tag">AUDITORÍA DE ENTORNO VIRTUAL</div>
+        <div class="bot-tag">ESTRÉS EXTREMO SIN GPU</div>
     </div>
 
     <script>
@@ -82,7 +82,6 @@
             frameCount++;
             const now = performance.now();
             
-            // Cada vez que pase 1 segundo, calculamos la tasa
             if (now >= lastTime + 1000) {
                 const fps = Math.round((frameCount * 1000) / (now - lastTime));
                 fpsDisplay.textContent = `${fps} FPS`;
@@ -93,7 +92,6 @@
             requestAnimationFrame(calculateFPS);
         }
         
-        // Iniciamos la monitorización del bucle gráfico
         requestAnimationFrame(calculateFPS);
     </script>
 
