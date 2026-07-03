@@ -3,53 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detector de Modo Visual</title>
+    <title>Inspección de Hardware</title>
     <style>
-        body {
+        * {
+            box-sizing: border-box;
             margin: 0;
+            padding: 0;
+        }
+        body {
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #0b0f19;
+            background-color: #05050a;
             color: #f3f4f6;
             font-family: monospace;
-            padding: 20px;
-            box-sizing: border-box;
+            padding: 24px;
         }
         .container {
+            width: 100%;
+            max-width: 800px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .card {
+            background-color: #0f111a;
+            border: 1px solid #1f293d;
+            border-radius: 12px;
+            padding: 30px;
             text-align: center;
         }
         .label {
-            font-size: 1.2rem;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
             color: #9ca3af;
             margin-bottom: 15px;
-            text-transform: uppercase;
         }
         .value {
             font-size: 4rem;
             font-weight: bold;
+        }
+        #cpu-display {
+            color: #ef4444; /* Rojo para el procesador */
+        }
+        #ram-display {
+            color: #3b82f6; /* Azul para la RAM */
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div class="label">Preferencia de Tema del Sistema</div>
-        <div class="value" id="theme-display">Detectando...</div>
+        <!-- Tarjeta de CPU -->
+        <div class="card">
+            <div class="label">Hilos de CPU</div>
+            <div class="value" id="cpu-display">0</div>
+        </div>
+
+        <!-- Tarjeta de RAM -->
+        <div class="card">
+            <div class="label">Memoria RAM</div>
+            <div class="value" id="ram-display">0 GB</div>
+        </div>
     </div>
 
     <script>
-        const themeDisplay = document.getElementById('theme-display');
+        // 1. Obtener núcleos/hilos lógicos del procesador
+        const hilosCPU = navigator.hardwareConcurrency || "No soportado";
+        document.getElementById('cpu-display').textContent = hilosCPU;
 
-        // Comprobamos si el navegador prefiere modo oscuro
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            themeDisplay.textContent = "MODO OSCURO 🌙";
-            themeDisplay.style.color = "#38bdf8"; // Azul claro
-        } else {
-            themeDisplay.textContent = "MODO CLARO ☀️";
-            themeDisplay.style.color = "#fbbf24"; // Amarillo sol
-        }
+        // 2. Obtener memoria RAM del dispositivo en GB
+        const memoriaRAM = navigator.deviceMemory || "No soportado";
+        document.getElementById('ram-display').textContent = typeof memoriaRAM === 'number' ? `${memoriaRAM} GB` : memoriaRAM;
     </script>
 
 </body>
