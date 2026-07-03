@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Diagnóstico Avanzado</title>
+    <title>Generador de Caos Temporal</title>
     <style>
         * {
             box-sizing: border-box;
@@ -15,7 +15,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #05050a;
+            background-color: #030303;
             color: #f3f4f6;
             font-family: monospace;
             padding: 24px;
@@ -28,14 +28,10 @@
             gap: 20px;
         }
         .card {
-            background-color: #0f111a;
-            border: 1px solid #1f293d;
+            background-color: #09090e;
+            border: 1px solid #27272a;
             border-radius: 12px;
             padding: 24px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
             text-align: center;
         }
         .full-width {
@@ -45,104 +41,92 @@
             font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            color: #9ca3af;
+            color: #71717a;
             margin-bottom: 12px;
         }
         .value {
             font-weight: bold;
         }
-        #benchmark-display {
-            font-size: 3rem;
-            color: #f43f5e; /* Rosa intenso */
+        #fps-display {
+            font-size: 3.5rem;
+            color: #a855f7; /* Morado */
         }
-        #gpu-display {
-            font-size: 1.3rem;
-            color: #10b981; /* Verde */
-            word-break: break-all;
-            line-height: 1.4;
+        #history-display {
+            font-size: 3.5rem;
+            color: #eab308; /* Amarillo */
         }
-        #network-display {
-            font-size: 2.2rem;
-            color: #06b6d4; /* Cian */
-            line-height: 1.3;
+        .timeline {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .milestone {
+            padding: 8px 12px;
+            background-color: #18181b;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: #ef4444; /* Rojo por defecto (Inactivo) */
+        }
+        .milestone.active {
+            color: #22c55e; /* Verde (Logrado) */
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- 1. Test de Rendimiento (Benchmark de Pi) -->
+        <!-- 1. El Detector de Mentiras Temporal -->
         <div class="card full-width">
-            <div class="label">Operaciones de Pi (en 200ms)</div>
-            <div class="value" id="benchmark-display">Calculando...</div>
+            <div class="label">Línea del Tiempo (Hitos del Reloj)</div>
+            <div class="timeline">
+                <div id="t-10" class="milestone">10ms</div>
+                <div id="t-100" class="milestone">100ms</div>
+                <div id="t-500" class="milestone">500ms</div>
+                <div id="t-1000" class="milestone">1000ms</div>
+                <div id="t-2000" class="milestone">2000ms</div>
+            </div>
         </div>
 
-        <!-- 2. Detector de Tarjeta Gráfica (GPU) -->
+        <!-- 2. Fluidez Gráfica (FPS acumulados) -->
         <div class="card">
-            <div class="label">Tarjeta Gráfica (WebGL)</div>
-            <div class="value" id="gpu-display">Detectando...</div>
+            <div class="label">Fotogramas Renderizados (FPS totales)</div>
+            <div class="value" id="fps-display">0</div>
         </div>
 
-        <!-- 3. Estado de la Red -->
+        <!-- 3. Páginas en el Historial -->
         <div class="card">
-            <div class="label">Conexión de Red</div>
-            <div class="value" id="network-display">Detectando...</div>
+            <div class="label">Páginas en Historial Interno</div>
+            <div class="value" id="history-display">0</div>
         </div>
     </div>
 
     <script>
-        // --- 1. BENCHMARK: CÁLCULO DE PI ---
-        function runBenchmark() {
-            const startTime = performance.now();
-            let iterations = 0;
-            let pi = 0;
-            
-            // Bucle intensivo durante exactamente 200 milisegundos
-            while (performance.now() - startTime < 200) {
-                // Serie de Leibniz para calcular Pi
-                pi += (iterations % 2 === 0 ? 1 : -1) / (2 * iterations + 1);
-                iterations++;
-            }
-            
-            // Formatea el número con puntos de miles para que se vea genial
-            document.getElementById('benchmark-display').textContent = iterations.toLocaleString();
+        // --- 1. SEGUIMIENTO DE HITOS TEMPORALES ---
+        const activarHito = (id) => {
+            document.getElementById(id).classList.add('active');
+        };
+
+        setTimeout(() => activarHito('t-10'), 10);
+        setTimeout(() => activarHito('t-100'), 100);
+        setTimeout(() => activarHito('t-500'), 500);
+        setTimeout(() => activarHito('t-1000'), 1000);
+        setTimeout(() => activarHito('t-2000'), 2000);
+
+
+        // --- 2. CONTADOR DE FOTOGRAMAS (FPS) ---
+        let totalFrames = 0;
+        function countFrames() {
+            totalFrames++;
+            document.getElementById('fps-display').textContent = totalFrames;
+            requestAnimationFrame(countFrames);
         }
-        
-        // Ejecutamos el benchmark de inmediato
-        runBenchmark();
+        requestAnimationFrame(countFrames);
 
 
-        // --- 2. DETECTOR DE GPU (WebGL) ---
-        try {
-            const canvas = document.createElement('canvas');
-            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-            
-            if (gl) {
-                // Forzamos al navegador a revelar el hardware real detrás de WebGL
-                const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-                if (debugInfo) {
-                    const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_VENDOR_WEBGL) + " \n " + gl.getParameter(debugInfo.UNMASKED_RENDERER_INFO_WEBGL);
-                    document.getElementById('gpu-display').innerText = renderer;
-                } else {
-                    document.getElementById('gpu-display').textContent = gl.getParameter(gl.RENDERER);
-                }
-            } else {
-                document.getElementById('gpu-display').textContent = "No soportado / Sin GPU";
-            }
-        } catch (e) {
-            document.getElementById('gpu-display').textContent = "Error al detectar GPU";
-        }
-
-
-        // --- 3. ESTADO DE LA RED ---
-        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-        if (connection) {
-            const tipo = connection.effectiveType || "Desconocido";
-            const velocidad = connection.downlink ? `${connection.downlink} Mbps` : "?? Mbps";
-            document.getElementById('network-display').innerHTML = `Tipo: ${tipo.toUpperCase()}<br>${velocidad}`;
-        } else {
-            document.getElementById('network-display').textContent = "API de Red no soportada";
-        }
+        // --- 3. LONGITUD DEL HISTORIAL ---
+        document.getElementById('history-display').textContent = window.history.length;
     </script>
 
 </body>
