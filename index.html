@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <!---->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inspección de Hardware</title>
+    <title>Panel de Diagnóstico Avanzado</title>
     <style>
         * {
             box-sizing: border-box;
@@ -23,7 +22,7 @@
         }
         .container {
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
@@ -32,52 +31,118 @@
             background-color: #0f111a;
             border: 1px solid #1f293d;
             border-radius: 12px;
-            padding: 30px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
         }
+        .full-width {
+            grid-column: span 2;
+        }
         .label {
-            font-size: 1rem;
+            font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 0.1em;
             color: #9ca3af;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         .value {
-            font-size: 4rem;
             font-weight: bold;
         }
-        #cpu-display {
-            color: #ef4444; /* Rojo para el procesador */
+        #benchmark-display {
+            font-size: 3rem;
+            color: #f43f5e; /* Rosa intenso */
         }
-        #ram-display {
-            color: #3b82f6; /* Azul para la RAM */
+        #gpu-display {
+            font-size: 1.3rem;
+            color: #10b981; /* Verde */
+            word-break: break-all;
+            line-height: 1.4;
+        }
+        #network-display {
+            font-size: 2.2rem;
+            color: #06b6d4; /* Cian */
+            line-height: 1.3;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Tarjeta de CPU -->
-        <div class="card">
-            <div class="label">Hilos de CPU</div>
-            <div class="value" id="cpu-display">0</div>
+        <!-- 1. Test de Rendimiento (Benchmark de Pi) -->
+        <div class="card full-width">
+            <div class="label">Operaciones de Pi (en 200ms)</div>
+            <div class="value" id="benchmark-display">Calculando...</div>
         </div>
 
-        <!-- Tarjeta de RAM -->
+        <!-- 2. Detector de Tarjeta Gráfica (GPU) -->
         <div class="card">
-            <div class="label">Memoria RAM</div>
-            <div class="value" id="ram-display">0 GB</div>
+            <div class="label">Tarjeta Gráfica (WebGL)</div>
+            <div class="value" id="gpu-display">Detectando...</div>
+        </div>
+
+        <!-- 3. Estado de la Red -->
+        <div class="card">
+            <div class="label">Conexión de Red</div>
+            <div class="value" id="network-display">Detectando...</div>
         </div>
     </div>
 
     <script>
-        // 1. Obtener núcleos/hilos lógicos del procesador
-        const hilosCPU = navigator.hardwareConcurrency || "No soportado";
-        document.getElementById('cpu-display').textContent = hilosCPU;
+        // --- 1. BENCHMARK: CÁLCULO DE PI ---
+        function runBenchmark() {
+            const startTime = performance.now();
+            let iterations = 0;
+            let pi = 0;
+            
+            // Bucle intensivo durante exactamente 200 milisegundos
+            while (performance.now() - startTime < 200) {
+                // Serie de Leibniz para calcular Pi
+                pi += (iterations % 2 === 0 ? 1 : -1) / (2 * iterations + 1);
+                iterations++;
+            }
+            
+            // Formatea el número con puntos de miles para que se vea genial
+            document.getElementById('benchmark-display').textContent = iterations.toLocaleString();
+        }
+        
+        // Ejecutamos el benchmark de inmediato
+        runBenchmark();
 
-        // 2. Obtener memoria RAM del dispositivo en GB
-        const memoriaRAM = navigator.deviceMemory || "No soportado";
-        document.getElementById('ram-display').textContent = typeof memoriaRAM === 'number' ? `${memoriaRAM} GB` : memoriaRAM;
+
+        // --- 2. DETECTOR DE GPU (WebGL) ---
+        try {
+            const canvas = document.createElement('canvas');
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            
+            if (gl) {
+                // Forzamos al navegador a revelar el hardware real detrás de WebGL
+                const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                if (debugInfo) {
+                    const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_VENDOR_WEBGL) + " \n " + gl.getParameter(debugInfo.UNMASKED_RENDERER_INFO_WEBGL);
+                    document.getElementById('gpu-display').innerText = renderer;
+                } else {
+                    document.getElementById('gpu-display').textContent = gl.getParameter(gl.RENDERER);
+                }
+            } else {
+                document.getElementById('gpu-display').textContent = "No soportado / Sin GPU";
+            }
+        } catch (e) {
+            document.getElementById('gpu-display').textContent = "Error al detectar GPU";
+        }
+
+
+        // --- 3. ESTADO DE LA RED ---
+        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        if (connection) {
+            const tipo = connection.effectiveType || "Desconocido";
+            const velocidad = connection.downlink ? `${connection.downlink} Mbps` : "?? Mbps";
+            document.getElementById('network-display').innerHTML = `Tipo: ${tipo.toUpperCase()}<br>${velocidad}`;
+        } else {
+            document.getElementById('network-display').textContent = "API de Red no soportada";
+        }
     </script>
 
 </body>
